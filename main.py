@@ -2,7 +2,6 @@ import argparse
 import requests
 import telegram
 from environs import Env
-from pprint import pprint
 from time import sleep
 
 
@@ -32,7 +31,6 @@ def main():
             response = requests.get(url, headers=headers, params=params)
             response.raise_for_status()
             attempt = response.json()
-            pprint(attempt)
         except requests.exceptions.Timeout:
             print('timeout')
             continue
