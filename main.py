@@ -5,20 +5,12 @@ from environs import Env
 from time import sleep
 
 
-def get_tg_chat_id():
-    """Получить chat_id из командной строки."""
-    parser = argparse.ArgumentParser(description='Проверка работ Devman')
-    parser.add_argument('chat_id', help='ваш chat_id')
-    args = parser.parse_args()
-    return args.chat_id
-
-
 def main():
     env = Env()
     env.read_env()
     tg_bot_token = env.str('TG_BOT_TOKEN')
     dvmn_token = env.str('DVMN_TOKEN')
-    tg_chat_id = get_tg_chat_id()
+    tg_chat_id = env.str('TG_CHAT_ID')
 
     bot = telegram.Bot(token=tg_bot_token)
 

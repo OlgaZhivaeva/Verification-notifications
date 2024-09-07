@@ -25,13 +25,14 @@ Save environment variables to a `.env` file
 ```commandline
 TG_BOT_TOKEN=Telegram token of your bot 
 DVMN_TOKEN=Your token on Devman
+TG_CHAT_ID=Your chat id
 ```
 ### Run
 
-At startup, specify your chat id
+Run the code with the command
 
 ```python
-python main.py your_chat_id
+python main.py
 ```
 
 ### Project Goals
