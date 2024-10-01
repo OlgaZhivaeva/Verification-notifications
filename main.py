@@ -1,18 +1,39 @@
-import argparse
 import requests
 import telegram
 from environs import Env
 from time import sleep
 
+import logging
+
+logger = logging.getLogger(__file__)
+
+class TelegramLogsHandler(logging.Handler):
+
+    def __init__(self, log_bot, chat_id):
+        super().__init__()
+        self.chat_id = chat_id
+        self.log_bot = log_bot
+
+    def emit(self, record):
+        log_entry = self.format(record)
+        self.log_bot.send_message(chat_id=self.chat_id, text=log_entry)
+
 
 def main():
     env = Env()
     env.read_env()
+    log_bot_token = env.str('LOG_BOT_TOKEN')
     tg_bot_token = env.str('TG_BOT_TOKEN')
     dvmn_token = env.str('DVMN_TOKEN')
     tg_chat_id = env.str('TG_CHAT_ID')
 
     bot = telegram.Bot(token=tg_bot_token)
+    log_bot = telegram.Bot(token=log_bot_token)
+
+    logging.basicConfig(level=logging.ERROR, format="%(levelname)s %(message)s")
+    logger.setLevel(logging.DEBUG)
+    logger.addHandler(TelegramLogsHandler(log_bot, tg_chat_id))
+
 
     url = 'https://dvmn.org/api/long_polling/'
     headers = {'Authorization': dvmn_token}
@@ -24,10 +45,10 @@ def main():
             response.raise_for_status()
             attempt = response.json()
         except requests.exceptions.Timeout:
-            print('timeout')
+            logger.error('timeout')
             continue
         except requests.ConnectionError:
-            print('ConnectionError')
+            logger.error('ConnectionError')
             sleep(5)
             continue
         if attempt['status'] == 'timeout':
@@ -54,4 +75,5 @@ def main():
 
 
 if __name__ == "__main__":
+
     main()
