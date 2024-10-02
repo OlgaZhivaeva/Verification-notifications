@@ -30,7 +30,6 @@ def main():
     bot = telegram.Bot(token=tg_bot_token)
     log_bot = telegram.Bot(token=log_bot_token)
 
-    logging.basicConfig(level=logging.ERROR, format="%(levelname)s %(message)s")
     logger.setLevel(logging.DEBUG)
     logger.addHandler(TelegramLogsHandler(log_bot, tg_chat_id))
 
@@ -50,6 +49,9 @@ def main():
         except requests.ConnectionError:
             logger.error('ConnectionError')
             sleep(5)
+            continue
+        except Exception as e:
+            logger.exception(f'Ошибка {e}')
             continue
         if attempt['status'] == 'timeout':
             timestamp = attempt['timestamp_to_request']
